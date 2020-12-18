@@ -1,6 +1,9 @@
-const { Account, Project, ProjectAddress, ProjectUser } = require('../db/db');
+const { Account, Project, ProjectAddress, ProjectUser, User } = require('../db/db');
 const { customAlphabet } = require('nanoid');
 const nanoid = customAlphabet('1234567890abcdef', 6)
+const { sendEmail } = require('../adaptors/mailgunAdaptor')
+const nconf = require('nconf');
+
 
 async function deleteProject(req, res) {
   const { projectId } = req.params;
@@ -146,7 +149,7 @@ async function postProject(req, res) {
 
     await project.addProjectAddresses({ accountId: account.id, addresses })
 
-    await project.addProjectCollaborators({ collaborators });
+    await project.addProjectCollaborators({ collaborators, mg: this.mg });
 
     const response = await project.response()
 
@@ -155,6 +158,46 @@ async function postProject(req, res) {
     await Project.cleanup({ projectId })
 
     res.send(error)
+  }
+}
+
+async function postProjectResend(req, res) {
+  const { projectId } = req.params;
+  const { collaboratorId } = req.body;
+
+  try {
+    const user = await User.findByPk(collaboratorId);
+
+    const { email } = user;
+
+    await sendEmail({
+      mg: this.mg,
+      data: {
+        to: email,
+        template: 'collaborator_invite',
+        'v:sign_in_url': `${nconf.get('app.authCallbackHost')}/login`,
+        subject: 'Invitation to collaborate on an ApplesTooApples project',
+      }
+    });
+
+    const projectUser = await ProjectUser.findOne({
+      where: {
+        userId: collaboratorId,
+        projectId
+      }
+    });
+
+    await projectUser.update({
+      invitationStatus: 'reminded'
+    })
+
+    const project = await Project.findByPk(projectId);
+
+    const response = await project.response();
+
+    res.send(response)
+  } catch (err) {
+    res.send(err)
   }
 }
 
@@ -191,7 +234,7 @@ async function putProject(req, res) {
         }
       });
 
-      await project.addProjectCollaborators({ collaborators });
+      await project.addProjectCollaborators({ collaborators, mg: this.mg });
     }
 
     const response = await project.response();
@@ -208,5 +251,6 @@ module.exports = {
   getProjects,
   postProject,
   postProjectCopy,
+  postProjectResend,
   putProject
 }

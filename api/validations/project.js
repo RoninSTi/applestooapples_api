@@ -131,6 +131,30 @@ const validatePostProject = {
   },
 }
 
+const validatePostProjectResend = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  schema: {
+    body: {
+      type: 'object',
+      properties: {
+        collaboratorId: { type: 'number'}
+      },
+      required: ['collaboratorId']
+    },
+    params: {
+      type: 'object',
+      properties: {
+        projectId: { type: 'number' }
+      },
+      required: ['projectId']
+    }
+  }
+}
+
 const validatePutProject = {
   preValidation: [
     async function (request) {
@@ -153,6 +177,7 @@ module.exports = {
   validateGetProject,
   validateGetProjects,
   validatePostProject,
+  validatePostProjectResend,
   validatePostCopyProject,
   validatePutProject
 }

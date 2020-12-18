@@ -1,4 +1,6 @@
 const { Model } = require('sequelize');
+const { sendEmail } = require('../adaptors/mailgunAdaptor')
+const nconf = require('nconf');
 
 class Project extends Model {
   static init(sequelize, DataTypes) {
@@ -108,7 +110,7 @@ class Project extends Model {
     await Promise.all(newAddresses)
   }
 
-  async addProjectCollaborators({ collaborators }) {
+  async addProjectCollaborators({ collaborators, mg }) {
     const { Account, ProjectUser, User } = this.sequelize.models;
 
     const projectAccountsToCreate = collaborators.map(async collaborator => {
@@ -168,7 +170,37 @@ class Project extends Model {
       }
     });
 
-    await Promise.all(projectAccountsToCreate)
+    const projectUsers = await Promise.all(projectAccountsToCreate)
+
+    const projectUsersToInvite = projectUsers.map(({ invitationStatus }) => invitationStatus === 'draft')
+
+    // const usersToInvite = await User.findAll({
+    //   where: {
+    //     id: projectUsersToInvite.map(({ userId }) => userId)
+    //   }
+    // });
+
+    // const emails = usersToInvite.map(({ email }) => {
+    //   return sendEmail({
+    //     mg,
+    //     data: {
+    //       to: email,
+    //       template: 'collaborator_invite',
+    //       'v:sign_in_url': `${nconf.get('app.authCallbackHost')}/login`,
+    //       subject: 'Invitation to collaborate on an ApplesTooApples project',
+    //     }
+    //   });
+    // });
+
+    // await Promise.all(emails);
+
+    await ProjectUser.update({
+      invitationStatus: 'pending'
+      }, {
+      where: {
+        userId: projectUsersToInvite.map(({ userId }) => userId)
+      }
+    });
   }
 
   async response() {
