@@ -4,6 +4,7 @@ const {
   getProjects,
   postProject,
   postProjectCopy,
+  postProjectResend,
   putProject
 } = require('../controllers/projectController');
 const {
@@ -12,6 +13,7 @@ const {
   validateGetProjects,
   validatePostCopyProject,
   validatePostProject,
+  validatePostProjectResend,
   validatePutProject
 } = require('../validations/project');
 
