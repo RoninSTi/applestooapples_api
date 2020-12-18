@@ -172,11 +172,13 @@ class Project extends Model {
 
     const projectUsers = await Promise.all(projectAccountsToCreate)
 
-    const projectUsersToInvite = projectUsers.map(({ invitationStatus }) => invitationStatus === 'draft')
+    const projectUsersToInvite = projectUsers
+      .map(({ userId, invitationStatus }) => invitationStatus === 'draft' ? userId : undefined)
+      .filter(el => el !== undefined);
 
     // const usersToInvite = await User.findAll({
     //   where: {
-    //     id: projectUsersToInvite.map(({ userId }) => userId)
+    //     id: projectUsersToInvite
     //   }
     // });
 
@@ -198,7 +200,7 @@ class Project extends Model {
       invitationStatus: 'pending'
       }, {
       where: {
-        userId: projectUsersToInvite.map(({ userId }) => userId)
+        userId: projectUsersToInvite
       }
     });
   }

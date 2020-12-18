@@ -166,19 +166,19 @@ async function postProjectResend(req, res) {
   const { collaboratorId } = req.body;
 
   try {
-    const user = await User.findByPk(collaboratorId);
+    // const user = await User.findByPk(collaboratorId);
 
-    const { email } = user;
+    // const { email } = user;
 
-    await sendEmail({
-      mg: this.mg,
-      data: {
-        to: email,
-        template: 'collaborator_invite',
-        'v:sign_in_url': `${nconf.get('app.authCallbackHost')}/login`,
-        subject: 'Invitation to collaborate on an ApplesTooApples project',
-      }
-    });
+    // await sendEmail({
+    //   mg: this.mg,
+    //   data: {
+    //     to: email,
+    //     template: 'collaborator_invite',
+    //     'v:sign_in_url': `${nconf.get('app.authCallbackHost')}/login`,
+    //     subject: 'Invitation to collaborate on an ApplesTooApples project',
+    //   }
+    // });
 
     const projectUser = await ProjectUser.findOne({
       where: {
