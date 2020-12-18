@@ -1,0 +1,10 @@
+#dependencies
+node_modules
+
+#secrets
+config/appSettings.dev.json
+config/appSettings.prod.json
+config/appSettings.staging.json
+
+#Dockerfile
+Dockerfile.dev
