@@ -15,6 +15,24 @@ const validateDeleteProject = {
   }
 }
 
+const validateDeleteProjectDocument = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        documentId: { type: 'number'},
+        projectId: { type: 'number' }
+      },
+      required: ['documentId', 'projectId']
+    }
+  }
+}
+
 const validateGetProject = {
   preValidation: [
     async function (request) {
@@ -131,6 +149,35 @@ const validatePostProject = {
   },
 }
 
+const validatePostProjectDocument = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  schema: {
+    body: {
+      type: 'object',
+      properties: {
+        fileName: { type: 'string' },
+        fileType: { type: 'string' },
+        url: {
+          type: 'string',
+          format: 'url'
+        }
+      },
+      required: ['fileName', 'fileType', 'url']
+    },
+    params: {
+      type: 'object',
+      properties: {
+        projectId: { type: 'number' }
+      },
+      required: ['projectId']
+    }
+  }
+}
+
 const validatePostProjectResend = {
   preValidation: [
     async function (request) {
@@ -174,9 +221,11 @@ const validatePutProject = {
 
 module.exports = {
   validateDeleteProject,
+  validateDeleteProjectDocument,
   validateGetProject,
   validateGetProjects,
   validatePostProject,
+  validatePostProjectDocument,
   validatePostProjectResend,
   validatePostCopyProject,
   validatePutProject

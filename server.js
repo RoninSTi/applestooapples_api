@@ -72,17 +72,17 @@ const createServer = (options) => {
   });
 
 
-  // const aws = require('aws-sdk');
+  const aws = require('aws-sdk');
 
-  // const AWS_ACCESS_KEY_ID = nconf.get('keys.amazon.AWSAccessKeyId');
-  // const AWS_SECRET_KEY = nconf.get('keys.amazon.AWSSecretKey');
+  const AWS_ACCESS_KEY_ID = nconf.get('keys.amazon.AWSAccessKeyId');
+  const AWS_SECRET_KEY = nconf.get('keys.amazon.AWSSecretKey');
 
-  // aws.config.update({
-  //   region: 'us-east-2',
-  //   accessKeyId: AWS_ACCESS_KEY_ID,
-  //   secretAccessKey: AWS_SECRET_KEY,
-  //   signatureVersion: 'v4'
-  // })
+  aws.config.update({
+    region: 'us-east-2',
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_KEY,
+    signatureVersion: 'v4'
+  })
 
   const mg = mailgun({ apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN });
 

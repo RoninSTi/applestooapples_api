@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 
 const { Account } = require('../models/Account');
 const { Address } = require('../models/Address');
+const { Document } = require('../models/Document')
 const { Project } = require('../models/Project');
 const { ProjectUser } = require('../models/ProjectUser')
 const { ProjectAddress } = require('../models/ProjectAddress');
@@ -18,6 +19,7 @@ const sequelize = new Sequelize(process.env.JAWSDB_URL, {
 const models = {
   Account: Account.init(sequelize, Sequelize),
   Address: Address.init(sequelize, Sequelize),
+  Document: Document.init(sequelize, Sequelize),
   Project: Project.init(sequelize, Sequelize),
   ProjectUser: ProjectUser.init(sequelize, Sequelize),
   ProjectAddress: ProjectAddress.init(sequelize, Sequelize),

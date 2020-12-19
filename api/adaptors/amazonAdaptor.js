@@ -1,7 +1,7 @@
 const aws = require('aws-sdk');
 const nconf = require('nconf');
 
-const getSignedUrl = async ({ fileName, fileType }) => {
+const getSignedFileUrl = async ({ fileName, fileType }) => {
   const S3_BUCKET = nconf.get('keys.amazon.bucket');
 
   const s3 = new aws.S3();
@@ -30,38 +30,8 @@ const getSignedUrl = async ({ fileName, fileType }) => {
   });
 };
 
-const getSignedImageUrl = async ({ fileName, fileType }) => {
-  const S3_BUCKET = nconf.get('keys.amazon.bucket');
-
-  const s3 = new aws.S3();
-
-  const s3Params = {
-    Bucket: S3_BUCKET,
-    Key: fileName,
-    Expires: 1000,
-    ContentType: fileType,
-    ACL: 'public-read'
-  };
-
-  return new Promise((resolve, reject) => {
-    s3.getSignedUrl('putObject', s3Params, (err, data) => {
-      if (err) {
-        reject(err);
-      }
-
-      const returnData = {
-        signedRequest: data,
-        url: `https://sipstir.imgix.net/${fileName}`
-      };
-
-      resolve(returnData)
-    });
-  });
-};
-
 module.exports = {
-  getSignedUrl,
-  getSignedImageUrl
+  getSignedFileUrl
 };
 
 

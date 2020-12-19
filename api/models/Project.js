@@ -206,7 +206,7 @@ class Project extends Model {
   }
 
   async response() {
-    const { Address, ProjectAddress, ProjectUser, User } = this.sequelize.models;
+    const { Address, Document, ProjectAddress, ProjectUser, User } = this.sequelize.models;
 
     const projectUsers = await ProjectUser.findAll({
       include: [{ all: true, nested: true }],
@@ -266,10 +266,19 @@ class Project extends Model {
       type: typeMap[address.id]
     }));
 
+    const documents = await Document.findAll({
+      where: {
+        projectId: this.id
+      }
+    });
+
+    const documentResponse = documents.map(document => document.toJSON())
+
     const response = {
       ...this.toJSON(),
       addresses: addressResponse,
-      collaborators: collaboratorResponse
+      collaborators: collaboratorResponse,
+      documents: documentResponse
     }
 
     return response

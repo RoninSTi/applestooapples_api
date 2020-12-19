@@ -1,4 +1,4 @@
-const { Account, Project, ProjectAddress, ProjectUser, User } = require('../db/db');
+const { Account, Document, Project, ProjectAddress, ProjectUser, User } = require('../db/db');
 const { customAlphabet } = require('nanoid');
 const nanoid = customAlphabet('1234567890abcdef', 6)
 const { sendEmail } = require('../adaptors/mailgunAdaptor')
@@ -18,6 +18,26 @@ async function deleteProject(req, res) {
     res.send('OK')
   } catch (error) {
     res.send(error);
+  }
+}
+
+async function deleteProjectDocument(req, res) {
+  const { documentId, projectId } = req.params
+
+  try {
+    await Document.destroy({
+      where: {
+        id: documentId
+      }
+    });
+
+    const project = await Project.findByPk(projectId)
+
+    const response = await project.response()
+
+    res.send(response)
+  } catch (err) {
+    res.send(err)
   }
 }
 
@@ -161,6 +181,27 @@ async function postProject(req, res) {
   }
 }
 
+async function postProjectDocument(req, res) {
+  const { projectId } = req.params;
+  const documentData = req.body;
+
+  try {
+    const project = await Project.findByPk(projectId);
+
+    const document = await Document.create({
+      ...documentData
+    });
+
+    await document.setProject(project);
+
+    const response = await project.response();
+
+    res.send(response)
+  } catch (err) {
+    res.send(err)
+  }
+}
+
 async function postProjectResend(req, res) {
   const { projectId } = req.params;
   const { collaboratorId } = req.body;
@@ -247,10 +288,12 @@ async function putProject(req, res) {
 
 module.exports = {
   deleteProject,
+  deleteProjectDocument,
   getProject,
   getProjects,
   postProject,
   postProjectCopy,
+  postProjectDocument,
   postProjectResend,
   putProject
 }
