@@ -13,14 +13,14 @@ async function getAuthSwoopCallback(req, res) {
 
     const account = await Account.findByPk(accountId)
 
-    const accountResponse = account.toJSON()
-
-    const accessToken = this.jwt.sign({
-      account: accountResponse,
+    const tokenData = {
+      account: account ? account.toJSON() : null,
       email,
       id,
       roles,
-    }, {
+    }
+
+    const accessToken = this.jwt.sign(tokenData, {
       expiresIn: 864000
     });
 
@@ -28,7 +28,7 @@ async function getAuthSwoopCallback(req, res) {
       accessToken,
       user: {
         ...user.toJSON(),
-        account: accountResponse
+        account: account ? account.toJSON() : null
       }
     }
 
