@@ -8,10 +8,10 @@ const validatePostSignedUrl = {
     body: {
       type: 'object',
       properties: {
+        contentType: { type: 'string' },
         fileName: { type: 'string' },
-        fileType: { type: 'string' },
       },
-      required: ['fileName', 'fileType']
+      required: ['contentType', 'fileName']
     }
   }
 }

@@ -1,4 +1,4 @@
-const { Account, Document, Project, ProjectAddress, ProjectUser, User } = require('../db/db');
+const { Account, Address, Document, Project, ProjectAddress, ProjectUser, User } = require('../db/db');
 const { customAlphabet } = require('nanoid');
 const nanoid = customAlphabet('1234567890abcdef', 6)
 const { sendEmail } = require('../adaptors/mailgunAdaptor')
@@ -228,8 +228,10 @@ async function postProjectResend(req, res) {
       }
     });
 
+    const invitationStatus = projectUser.invitationStatus === 'unasked' ? 'pending' : 'reminded'
+
     await projectUser.update({
-      invitationStatus: 'reminded'
+      invitationStatus,
     })
 
     const project = await Project.findByPk(projectId);
@@ -286,6 +288,35 @@ async function putProject(req, res) {
   }
 }
 
+async function putProjectAddress(req, res) {
+  const { id: accountId } = req.user.account
+  const { addressId, projectId } = req.params;
+
+  const { save, ...updatedAddress } = req.body
+
+  try {
+    const address = await Address.findByPk(addressId);
+
+    const account = await Account.findByPk(accountId);
+
+    if (save) {
+      await address.setAccount(account);
+    } else {
+      await address.setAccount(null);
+    }
+
+    await address.update(updatedAddress);
+
+    const project = await Project.findByPk(projectId);
+
+    const response = await project.response();
+
+    res.send(response);
+  } catch (err) {
+    res.send(err);
+  }
+}
+
 module.exports = {
   deleteProject,
   deleteProjectDocument,
@@ -295,5 +326,6 @@ module.exports = {
   postProjectCopy,
   postProjectDocument,
   postProjectResend,
-  putProject
+  putProject,
+  putProjectAddress
 }

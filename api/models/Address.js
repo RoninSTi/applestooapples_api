@@ -21,9 +21,13 @@ class Address extends Model {
   }
 
   static associate(models) {
-    this.memberAssociation = models.Account.hasMany(models.Address, {
-      as: 'addresses',
-      foreignKey: 'addressId',
+    this.accountAssociation = models.Address.belongsTo(models.Account, {
+      foreignKey: 'accountId',
+    });
+
+    this.projectAddressAssociation = models.Address.belongsToMany(models.Project, {
+      through: 'ProjectAddress',
+      foreignKey: 'addressId'
     });
   }
 }

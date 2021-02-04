@@ -8,7 +8,8 @@ const {
   postProjectCopy,
   postProjectDocument,
   postProjectResend,
-  putProject
+  putProject,
+  putProjectAddress
 } = require('../controllers/projectController');
 const {
   validateDeleteProject,
@@ -19,7 +20,8 @@ const {
   validatePostProject,
   validatePostProjectDocument,
   validatePostProjectResend,
-  validatePutProject
+  validatePutProject,
+  validatePutProjectAddress
 } = require('../validations/project');
 
 module.exports = async (fastify) => {
@@ -27,9 +29,10 @@ module.exports = async (fastify) => {
   fastify.delete('/project/:projectId/document/:documentId', validateDeleteProjectDocument, deleteProjectDocument)
   fastify.get('/project/:projectId', validateGetProject, getProject);
   fastify.get('/projects', validateGetProjects, getProjects);
-  fastify.put('/project/:projectId', validatePutProject, putProject)
   fastify.post('/project', validatePostProject, postProject);
   fastify.post('/project/:projectId/document', validatePostProjectDocument, postProjectDocument);
   fastify.post('/project/:projectId/resend', validatePostProjectResend, postProjectResend);
   fastify.post('/project/copy/:projectId', validatePostCopyProject, postProjectCopy);
+  fastify.put('/project/:projectId', validatePutProject, putProject);
+  fastify.put('/project/:projectId/address/:addressId', validatePutProjectAddress, putProjectAddress)
 };

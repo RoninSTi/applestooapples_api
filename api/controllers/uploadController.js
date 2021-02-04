@@ -1,10 +1,13 @@
 const { getSignedFileUrl } = require('../adaptors/amazonAdaptor');
+const { slugify } = require('../utils/strings')
 
 const postUploadSignedUrl = async (req, res) => {
-  const { fileName, fileType } = req.body;
+  const { fileName: fn, contentType } = req.body;
+
+  const fileName = slugify(fn);
 
   try {
-    fileData = await getSignedFileUrl({ fileName, fileType });
+    fileData = await getSignedFileUrl({ contentType, fileName });
 
     res.send(fileData);
   } catch (error) {

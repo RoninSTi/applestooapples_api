@@ -33,18 +33,19 @@ class Project extends Model {
       foreignKey: 'accountId'
     });
 
-    this.addressAssociation = models.Project.belongsToMany(models.Address, {
-      through: 'ProjectAddress',
-      as: 'addresses',
-      foreignKey: 'projectId',
-      otherKey: 'addressId',
+    this.documentAssociation = models.Project.hasMany(models.Document, {
+      as: 'documents',
+      foreignKey: 'projectId'
     });
 
-    this.userAssociation = models.Project.belongsToMany(models.User, {
+    this.projectAddressAssociation = models.Project.belongsToMany(models.Address, {
+      through: 'ProjectAddress',
+      foreignKey: 'projectId'
+    });
+
+    this.projectUserAssociation = models.Project.belongsToMany(models.User, {
       through: 'ProjectUser',
-      as: 'users',
-      foreignKey: 'projectId',
-      otherKey: 'userId',
+      foreignKey: 'projectId'
     });
   }
 
@@ -97,7 +98,7 @@ class Project extends Model {
       const newAddress = await Address.create({ ...addressData })
 
       if (save) {
-        await account.addAddresses([newAddress])
+        await newAddress.setAccount(account)
       }
 
       return ProjectAddress.create({
@@ -266,13 +267,13 @@ class Project extends Model {
       type: typeMap[address.id]
     }));
 
-    const documents = await Document.findAll({
-      where: {
-        projectId: this.id
-      }
-    });
+    // const documents = await Document.findAll({
+    //   where: {
+    //     projectId: this.id
+    //   }
+    // });
 
-    const documentResponse = documents.map(document => document.toJSON())
+    const documentResponse = await this.getDocuments()
 
     const response = {
       ...this.toJSON(),

@@ -1,7 +1,7 @@
 const aws = require('aws-sdk');
 const nconf = require('nconf');
 
-const getSignedFileUrl = async ({ fileName, fileType }) => {
+const getSignedFileUrl = async ({ fileName, contentType }) => {
   const S3_BUCKET = nconf.get('keys.amazon.bucket');
 
   const s3 = new aws.S3();
@@ -10,7 +10,7 @@ const getSignedFileUrl = async ({ fileName, fileType }) => {
     Bucket: S3_BUCKET,
     Key: fileName,
     Expires: 1000,
-    ContentType: fileType,
+    ContentType: contentType,
     ACL: 'public-read'
   };
 

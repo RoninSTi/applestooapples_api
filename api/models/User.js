@@ -62,10 +62,10 @@ class User extends Model {
   }
 
   static associate(models) {
-    // this.memberAssociation = models.User.belongsTo(models.Account, {
-    //   as: 'account',
-    //   foreignKey: 'accountId'
-    // });
+    this.projectUserAssociation = models.User.belongsToMany(models.Project, {
+      through: 'ProjectUser',
+      foreignKey: 'userId'
+    });
   }
 
   static generateSalt() {

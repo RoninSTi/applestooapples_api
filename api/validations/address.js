@@ -23,10 +23,10 @@ const validateDeleteAddress = {
       }
     },
     async function (req) {
-      const { accounts } = req.user
+      const { account } = req.user
       const { accountId } = req.params
 
-      const canAccess = accounts.some(account => parseInt(account.id) === parseInt(accountId))
+      const canAccess = account.id === accountId
 
       if (!canAccess) {
         throw new Error('Not a member of the account')

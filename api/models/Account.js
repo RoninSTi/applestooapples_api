@@ -18,10 +18,20 @@ class Account extends Model {
   }
 
   static associate(models) {
+    this.addressAssocation = models.Account.hasMany(models.Address, {
+      as: 'addresses',
+      foreignKey: 'accountId'
+    });
+
     this.memberAssociation = models.Account.hasMany(models.User, {
       as: 'users',
       foreignKey: 'accountId'
     });
+
+    this.projectAssociation = models.Account.hasMany(models.Project, {
+      as: 'projects',
+      foreignKey: 'accountId'
+    })
   }
 
   static async getSingle(id) {

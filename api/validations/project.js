@@ -219,6 +219,24 @@ const validatePutProject = {
   }
 }
 
+const validatePutProjectAddress = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        addressId: { type: 'number' },
+        projectId: { type: 'number' }
+      },
+      required: ['addressId', 'projectId']
+    }
+  }
+}
+
 module.exports = {
   validateDeleteProject,
   validateDeleteProjectDocument,
@@ -228,5 +246,6 @@ module.exports = {
   validatePostProjectDocument,
   validatePostProjectResend,
   validatePostCopyProject,
-  validatePutProject
+  validatePutProject,
+  validatePutProjectAddress
 }
