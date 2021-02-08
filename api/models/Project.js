@@ -12,7 +12,7 @@ class Project extends Model {
         defaultValue: false,
       },
       name: DataTypes.STRING,
-      scope: DataTypes.STRING,
+      scope: DataTypes.TEXT,
       size: {
         type: DataTypes.ENUM,
         values: ['sm', 'md', 'lg', 'xl']
