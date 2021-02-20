@@ -47,6 +47,11 @@ class Project extends Model {
       through: 'ProjectUser',
       foreignKey: 'projectId'
     });
+
+    this.roomSpecificationAssociation = models.Project.hasMany(models.RoomSpecification, {
+      as: 'specifications',
+      foreignKey: 'projectId'
+    });
   }
 
   static async cleanup({ projectId }) {
@@ -207,7 +212,7 @@ class Project extends Model {
   }
 
   async response() {
-    const { Address, Document, ProjectAddress, ProjectUser, User } = this.sequelize.models;
+    const { Address, ProjectAddress, ProjectUser, RoomSpecification, SpecificationItem, User } = this.sequelize.models;
 
     const projectUsers = await ProjectUser.findAll({
       include: [{ all: true, nested: true }],
@@ -267,19 +272,21 @@ class Project extends Model {
       type: typeMap[address.id]
     }));
 
-    // const documents = await Document.findAll({
-    //   where: {
-    //     projectId: this.id
-    //   }
-    // });
-
     const documentResponse = await this.getDocuments()
+
+    const specifications = await RoomSpecification.findAll({
+      include: [{ model: SpecificationItem, as: 'items' }],
+      where: {
+        projectId: this.id
+      }
+    })
 
     const response = {
       ...this.toJSON(),
       addresses: addressResponse,
       collaborators: collaboratorResponse,
-      documents: documentResponse
+      documents: documentResponse,
+      specifications
     }
 
     return response

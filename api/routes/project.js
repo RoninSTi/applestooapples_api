@@ -24,6 +24,13 @@ const {
   validatePutProjectAddress
 } = require('../validations/project');
 
+const {
+  postSpecification
+} = require('../controllers/specificationController')
+const {
+  validatePostSpecification
+} = require('../validations/specification')
+
 module.exports = async (fastify) => {
   fastify.delete('/project/:projectId', validateDeleteProject, deleteProject);
   fastify.delete('/project/:projectId/document/:documentId', validateDeleteProjectDocument, deleteProjectDocument)
@@ -33,6 +40,7 @@ module.exports = async (fastify) => {
   fastify.post('/project/:projectId/document', validatePostProjectDocument, postProjectDocument);
   fastify.post('/project/:projectId/resend', validatePostProjectResend, postProjectResend);
   fastify.post('/project/copy/:projectId', validatePostCopyProject, postProjectCopy);
+  fastify.post('/project/:projectId/specification', validatePostSpecification, postSpecification);
   fastify.put('/project/:projectId', validatePutProject, putProject);
   fastify.put('/project/:projectId/address/:addressId', validatePutProjectAddress, putProjectAddress)
 };
