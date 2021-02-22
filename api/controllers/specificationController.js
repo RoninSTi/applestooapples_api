@@ -5,6 +5,23 @@ const { sendEmail } = require('../adaptors/mailgunAdaptor')
 const nconf = require('nconf');
 const {  } = require('../models/RoomSpecification');
 
+async function deleteSpecification(req, res) {
+  const { roomSpecificationId } = req.params;
+
+  try {
+    const roomSpecification = await RoomSpecification.findByPk(roomSpecificationId);
+
+    const project = await Project.findByPk(roomSpecification.projectId);
+
+    await roomSpecification.destroy();
+
+    const response = await project.response()
+
+    res.send(response)
+  } catch (err) {
+    res.send(err);
+  }
+}
 
 async function postSpecification(req, res) {
   const { projectId } = req.params;
@@ -60,6 +77,7 @@ async function putSpecification(req, res) {
 }
 
 module.exports = {
+  deleteSpecification,
   postSpecification,
   putSpecification
 }

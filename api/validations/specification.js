@@ -1,3 +1,20 @@
+const validateDeleteSpecification = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        roomSpecificationId: { type: 'number' }
+      },
+      required: ['roomSpecificationId']
+    }
+  },
+}
+
 const validatePostSpecification = {
   preValidation: [
     async function (request) {
@@ -105,6 +122,7 @@ const validatePutSpecification = {
 }
 
 module.exports = {
+  validateDeleteSpecification,
   validatePostSpecification,
   validatePutSpecification
 }
