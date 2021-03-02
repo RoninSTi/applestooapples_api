@@ -212,7 +212,15 @@ class Project extends Model {
   }
 
   async response() {
-    const { Address, ProjectAddress, ProjectUser, RoomSpecification, SpecificationItem, User } = this.sequelize.models;
+    const {
+      Address,
+      ProjectAddress,
+      ProjectUser,
+      RoomSpecification,
+      SpecificationCategory,
+      SpecificationItem,
+      User
+    } = this.sequelize.models;
 
     const projectUsers = await ProjectUser.findAll({
       include: [{ all: true, nested: true }],
@@ -275,7 +283,17 @@ class Project extends Model {
     const documentResponse = await this.getDocuments()
 
     const specifications = await RoomSpecification.findAll({
-      include: [{ model: SpecificationItem, as: 'items' }],
+      include: [
+        {
+          model: SpecificationCategory,
+          as: 'categories',
+          include: [
+            {
+              model: SpecificationItem,
+              as: 'items'
+            }
+          ]
+        }],
       where: {
         projectId: this.id
       }

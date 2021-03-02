@@ -15,10 +15,6 @@ class SpecificationItem extends Model {
       finish: DataTypes.STRING,
       item: DataTypes.STRING,
       manufacturer: DataTypes.STRING,
-      material: {
-        type: DataTypes.ENUM,
-        values: ['plumbing', 'hardware', 'lighting', 'finishes', 'stone', 'appliances', 'accessories', 'upholstery', 'furnishings']
-      },
       model: DataTypes.STRING,
       phase: {
         type: DataTypes.ENUM,
@@ -39,8 +35,8 @@ class SpecificationItem extends Model {
   }
 
   static associate(models) {
-    this.projectAssociation = models.SpecificationItem.belongsTo(models.RoomSpecification, {
-      foreignKey: 'roomSpecificationId'
+    this.specificationCategoryAssociation = models.SpecificationItem.belongsTo(models.SpecificationCategory, {
+      foreignKey: 'specificationCategoryId'
     });
   }
 }

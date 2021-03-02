@@ -25,36 +25,7 @@ const validatePostSpecification = {
     body: {
       type: 'object',
       properties: {
-        date: { type: 'string' },
-        items: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              comments: { type: 'string'},
-              cost: { type: 'number'},
-              currency: { type: 'string'},
-              date: { type: 'string' },
-              description: { type: 'string' },
-              dimensions: { type: 'string' },
-              finish: { type: 'string' },
-              item: { type: 'string' },
-              manufacturer: { type: 'string' },
-              material: { type: 'string' },
-              model: { type: 'string' },
-              phase: { type: 'string' },
-              provided: { type: 'string' },
-              qty: { type: 'number' },
-              room: { type: 'string' },
-              total: { type: 'number' },
-              um: { type: 'string' },
-            }
-          }
-        },
-        room: {
-          type: 'string',
-          // enum: ['new', 'remodel']
-        }
+        room: { type: 'string' }
       },
       required: ['room'],
     },
@@ -78,36 +49,7 @@ const validatePutSpecification = {
     body: {
       type: 'object',
       properties: {
-        date: { type: 'string' },
-        items: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              comments: { type: 'string' },
-              cost: { type: 'number' },
-              currency: { type: 'string' },
-              date: { type: 'string' },
-              description: { type: 'string' },
-              dimensions: { type: 'string' },
-              finish: { type: 'string' },
-              item: { type: 'string' },
-              manufacturer: { type: 'string' },
-              material: { type: 'string' },
-              model: { type: 'string' },
-              phase: { type: 'string' },
-              provided: { type: 'string' },
-              qty: { type: 'number' },
-              room: { type: 'string' },
-              total: { type: 'number' },
-              um: { type: 'string' },
-            }
-          }
-        },
-        room: {
-          type: 'string',
-          // enum: ['new', 'remodel']
-        }
+        room: { type: 'string' }
       },
       required: ['room'],
     },

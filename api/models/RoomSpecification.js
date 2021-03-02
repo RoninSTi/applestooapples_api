@@ -1,10 +1,8 @@
 const { Model } = require('sequelize');
-const { sendEmail } = require('../adaptors/mailgunAdaptor')
 
 class RoomSpecification extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
-      date: DataTypes.DATE,
       room: {
         type: DataTypes.ENUM,
         values: [
@@ -84,20 +82,10 @@ class RoomSpecification extends Model {
       foreignKey: 'projectId'
     });
 
-    this.specificationItemAssociation = models.RoomSpecification.hasMany(models.SpecificationItem, {
-      as: 'items',
+    this.specificationItemAssociation = models.RoomSpecification.hasMany(models.SpecificationCategory, {
+      as: 'categories',
       foreignKey: 'roomSpecificationId'
     });
-  }
-
-  async addItems({ items }) {
-    const { SpecificationItem } = this.sequelize.models;
-
-    const specificationItemPromises = items.map(item => SpecificationItem.create(item))
-
-    const specificationItems = await Promise.all(specificationItemPromises)
-
-    await this.setItems(specificationItems);
   }
 }
 

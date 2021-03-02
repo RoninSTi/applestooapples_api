@@ -3,7 +3,21 @@ const { customAlphabet } = require('nanoid');
 const nanoid = customAlphabet('1234567890abcdef', 6)
 const { sendEmail } = require('../adaptors/mailgunAdaptor')
 const nconf = require('nconf');
-const {  } = require('../models/RoomSpecification');
+const { } = require('../models/RoomSpecification');
+
+// async function postCopySpecification(req, res) {
+//   const { roomSpecificationId } = req.params;
+//   const { type } = req.body;
+
+//   try {
+//     const roomSpecification = await RoomSpecification.findByPk(roomSpecificationId);
+
+//     const specificationItems
+
+//   } catch (err) {
+//     res.send(err)
+//   }
+// }
 
 async function deleteSpecification(req, res) {
   const { roomSpecificationId } = req.params;
@@ -35,10 +49,6 @@ async function postSpecification(req, res) {
 
     await roomSpecification.setProject(project);
 
-    if (items && items.length > 0) {
-      await roomSpecification.addItems({ items })
-    }
-
     const response = await project.response()
 
     res.send(response)
@@ -55,16 +65,6 @@ async function putSpecification(req, res) {
     const roomSpecification = await RoomSpecification.findByPk(roomSpecificationId);
 
     await roomSpecification.update(specificationData);
-
-    if (items && items.length > 0) {
-      await SpecificationItem.destroy({
-        where: {
-          roomSpecificationId
-        }
-      });
-
-      await roomSpecification.addItems({ items });
-    }
 
     const project = await Project.findByPk(roomSpecification.projectId);
 

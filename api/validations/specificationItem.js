@@ -34,7 +34,7 @@ const validatePostSpecificationItem = {
         finish: { type: 'string' },
         item: { type: 'string' },
         manufacturer: { type: 'string' },
-        material: { type: 'string' },
+        category: { type: 'string' },
         model: { type: 'string' },
         phase: { type: 'string' },
         provided: { type: 'string' },
@@ -43,6 +43,7 @@ const validatePostSpecificationItem = {
         total: { type: 'number' },
         um: { type: 'string' },
       },
+      required: ['category']
     },
     params: {
       type: 'object',
@@ -73,7 +74,7 @@ const validatePutSpecificationItem = {
         finish: { type: 'string' },
         item: { type: 'string' },
         manufacturer: { type: 'string' },
-        material: { type: 'string' },
+        category: { type: 'string' },
         model: { type: 'string' },
         phase: { type: 'string' },
         provided: { type: 'string' },
@@ -82,6 +83,7 @@ const validatePutSpecificationItem = {
         total: { type: 'number' },
         um: { type: 'string' },
       },
+      required: ['category']
     },
     params: {
       type: 'object',
