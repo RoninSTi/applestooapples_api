@@ -11,9 +11,17 @@ async function deleteSpecificationItem(req, res) {
   try {
     const specificationItem = await SpecificationItem.findByPk(specificationItemId);
 
-    const roomSpecification = await RoomSpecification.findByPk(specificationItem.roomSpecificationId);
+    const specificationCategory = await SpecificationCategory.findByPk(specificationItem.specificationCategoryId)
+
+    const roomSpecification = await RoomSpecification.findByPk(specificationCategory.roomSpecificationId);
 
     await specificationItem.destroy();
+
+    const oldItems = await specificationCategory.getItems();
+
+    if (oldItems.length === 0) {
+      await specificationCategory.destroy();
+    }
 
     const project = await Project.findByPk(roomSpecification.projectId);
 
@@ -63,7 +71,7 @@ async function putSpecificationItem(req, res) {
 
     await specificationItem.update(specificationItemData);
 
-    const specificationCategory = specificationCategory.findByPk(specificationItem.specificationCategoryId)
+    const specificationCategory = await SpecificationCategory.findByPk(specificationItem.specificationCategoryId)
 
     if (specificationCategory.type !== category) {
       const [updatedSpecificationCategory] = await SpecificationCategory.findOrCreate({
@@ -74,6 +82,15 @@ async function putSpecificationItem(req, res) {
       })
 
       await updatedSpecificationCategory.addItem(specificationItem)
+
+      const oldItems = await specificationCategory.getItems();
+
+      console.log({ oldItems })
+
+      if (oldItems.length === 0) {
+        await specificationCategory.destroy();
+      }
+
     }
 
     const roomSpecification = await RoomSpecification.findByPk(specificationCategory.roomSpecificationId);
