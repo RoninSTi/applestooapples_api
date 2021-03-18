@@ -15,6 +15,31 @@ const validateDeleteSpecification = {
   },
 }
 
+const validatePostCopySpecification = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  schema: {
+    body: {
+      type: 'object',
+      properties: {
+        room: { type: 'string' },
+        depth: { type: 'string' }
+      },
+      required: ['depth', 'room'],
+    },
+    params: {
+      type: 'object',
+      properties: {
+        roomSpecificationId: { type: 'number' }
+      },
+      required: ['roomSpecificationId']
+    }
+  },
+}
+
 const validatePostSpecification = {
   preValidation: [
     async function (request) {
@@ -65,6 +90,7 @@ const validatePutSpecification = {
 
 module.exports = {
   validateDeleteSpecification,
+  validatePostCopySpecification,
   validatePostSpecification,
   validatePutSpecification
 }

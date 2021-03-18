@@ -139,6 +139,10 @@ const validatePostProject = {
           enum: ['sm', 'md', 'lg', 'xl']
         },
         startDate: { type: 'string' },
+        status: {
+          type: 'string',
+          enum: ['pre', 'under', 'finish', 'completed']
+        },
         type: {
           type: 'string',
           enum: ['new', 'remodel']

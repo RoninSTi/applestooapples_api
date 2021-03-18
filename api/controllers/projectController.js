@@ -1,9 +1,17 @@
-const { Account, Address, Document, Project, ProjectAddress, ProjectUser, User } = require('../db/db');
+const {
+  Account,
+  Address,
+  Document,
+  Project,
+  ProjectAddress,
+  ProjectUser,
+  RoomSpecification,
+  SpecificationCategory
+} = require('../db/db');
 const { customAlphabet } = require('nanoid');
 const nanoid = customAlphabet('1234567890abcdef', 6)
 const { sendEmail } = require('../adaptors/mailgunAdaptor')
 const nconf = require('nconf');
-
 
 async function deleteProject(req, res) {
   const { projectId } = req.params;
@@ -140,6 +148,48 @@ async function postProjectCopy(req, res) {
     });
 
     await Promise.all(newAddresses);
+
+    const roomSpecifications = await project.getSpecifications();
+
+    await Promise.all(roomSpecifications.map(async (roomSpecification) => {
+      const { room } = roomSpecification;
+
+      const newRoomSpecification = await RoomSpecification.create({
+        room
+      });
+
+      await newRoomSpecification.setProject(project);
+
+      const specificationCategories = await SpecificationCategory.findAll({
+        where: {
+          roomSpecificationId: roomSpecification.id
+        }
+      });
+
+      const newSpecificationCategoryPromises = specificationCategories.map(category => {
+        const { type } = category;
+
+        return SpecificationCategory.create({ type });
+      });
+
+      const newSpecificationCategories = await Promise.all(newSpecificationCategoryPromises);
+
+      await newRoomSpecification.addCategories(newSpecificationCategories);
+
+      await Promise.all(specificationCategories.map(async (category) => {
+        const items = await category.getItems();
+
+        await Promise.all(items.map(async (item) => {
+          const { id, ...newData } = item.toJSON();
+
+          const newItem = await SpecificationItem.create(newData);
+
+          const newCategory = newSpecificationCategories.find(({ type }) => category.type === type);
+
+          await newCategory.addItem(newItem);
+        }))
+      }));
+    }))
 
     const response = await project.response()
 

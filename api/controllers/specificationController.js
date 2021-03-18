@@ -4,20 +4,7 @@ const nanoid = customAlphabet('1234567890abcdef', 6)
 const { sendEmail } = require('../adaptors/mailgunAdaptor')
 const nconf = require('nconf');
 const { } = require('../models/RoomSpecification');
-
-// async function postCopySpecification(req, res) {
-//   const { roomSpecificationId } = req.params;
-//   const { type } = req.body;
-
-//   try {
-//     const roomSpecification = await RoomSpecification.findByPk(roomSpecificationId);
-
-//     const specificationItems
-
-//   } catch (err) {
-//     res.send(err)
-//   }
-// }
+const { SpecificationCategory } = require('../models/SpecificationCategory');
 
 async function deleteSpecification(req, res) {
   const { roomSpecificationId } = req.params;
@@ -57,6 +44,61 @@ async function postSpecification(req, res) {
   }
 }
 
+async function postCopySpecification(req, res) {
+  const { roomSpecificationId } = req.params;
+  const { depth, room } = req.body;
+
+  try {
+    const newRoomSpecification = await RoomSpecification.create({
+      room
+    });
+
+    const roomSpecification = await RoomSpecification.findByPk(roomSpecificationId);
+
+    const project = await roomSpecification.getProject();
+
+    await newRoomSpecification.setProject(project);
+
+    const specificationCategories = await SpecificationCategory.findAll({
+      where: {
+        roomSpecificationId
+      }
+    });
+
+    const newSpecificationCategoryPromises = specificationCategories.map(category => {
+      const { type } = category;
+
+      return SpecificationCategory.create({ type });
+    });
+
+    const newSpecificationCategories = await Promise.all(newSpecificationCategoryPromises);
+
+    await newRoomSpecification.addCategories(newSpecificationCategories);
+
+    if (depth === 'full') {
+      await Promise.all(specificationCategories.map(async (category) => {
+        const items = await category.getItems();
+
+        await Promise.all(items.map(async (item) => {
+          const { id, ...newData } = item.toJSON();
+
+          const newItem = await SpecificationItem.create(newData);
+
+          const newCategory = newSpecificationCategories.find(({ type }) => category.type === type);
+
+          await newCategory.addItem(newItem);
+        }))
+      }));
+    }
+
+    const response = await project.response();
+
+    res.send(response);
+  } catch (err) {
+    res.send(err)
+  }
+}
+
 async function putSpecification(req, res) {
   const { roomSpecificationId } = req.params
   const { items, ...specificationData } = req.body;
@@ -78,6 +120,7 @@ async function putSpecification(req, res) {
 
 module.exports = {
   deleteSpecification,
+  postCopySpecification,
   postSpecification,
   putSpecification
 }

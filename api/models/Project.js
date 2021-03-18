@@ -18,6 +18,11 @@ class Project extends Model {
         values: ['sm', 'md', 'lg', 'xl']
       },
       startDate: DataTypes.DATE,
+      status: {
+        type: DataTypes.ENUM,
+        defaultValue: 'pre',
+        values: ['pre', 'under', 'finish', 'completed']
+      },
       type: {
         type: DataTypes.ENUM,
         values: ['new', 'remodel']
@@ -120,7 +125,7 @@ class Project extends Model {
     const { Account, ProjectUser, User } = this.sequelize.models;
 
     const projectAccountsToCreate = collaborators.map(async collaborator => {
-      const { email, firstName, invitationStatus, lastName, role } = collaborator
+      const { companyName, email, firstName, invitationStatus, lastName, role } = collaborator
 
       const [user, created] = await User.findOrCreate({
         where: {
@@ -129,6 +134,8 @@ class Project extends Model {
       })
 
       if (created) {
+        user.companyName = companyName
+
         user.firstName = firstName
 
         user.lastName = lastName
