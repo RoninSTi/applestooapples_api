@@ -44,6 +44,68 @@ async function postSpecification(req, res) {
   }
 }
 
+async function postAddSpecification(req, res) {
+  const { projectId } = req.params;
+
+  const { depth, sourceProjectId } = req.body;
+
+  try {
+    const project = await Project.findByPk(projectId)
+
+    const sourceProject = await Project.findByPk(sourceProjectId)
+
+    const roomSpecifications = await sourceProject.getSpecifications();
+
+    await Promise.all(roomSpecifications.map(async (roomSpecification) => {
+      const { room } = roomSpecification;
+
+      const newRoomSpecification = await RoomSpecification.create({
+        room
+      });
+
+      await newRoomSpecification.setProject(project);
+
+      const specificationCategories = await SpecificationCategory.findAll({
+        where: {
+          roomSpecificationId: roomSpecification.id
+        }
+      });
+
+      const newSpecificationCategoryPromises = specificationCategories.map(category => {
+        const { type } = category;
+
+        return SpecificationCategory.create({ type });
+      });
+
+      const newSpecificationCategories = await Promise.all(newSpecificationCategoryPromises);
+
+      await newRoomSpecification.addCategories(newSpecificationCategories);
+
+      if (depth === 'full') {
+        await Promise.all(specificationCategories.map(async (category) => {
+          const items = await category.getItems();
+
+          await Promise.all(items.map(async (item) => {
+            const { id, ...newData } = item.toJSON();
+
+            const newItem = await SpecificationItem.create(newData);
+
+            const newCategory = newSpecificationCategories.find(({ type }) => category.type === type);
+
+            await newCategory.addItem(newItem);
+          }))
+        }));
+      }
+    }))
+
+    const response = await project.response()
+
+    res.send(response)
+  } catch (err) {
+    res.send(err)
+  }
+}
+
 async function postCopySpecification(req, res) {
   const { roomSpecificationId } = req.params;
   const { depth, room } = req.body;
@@ -120,6 +182,7 @@ async function putSpecification(req, res) {
 
 module.exports = {
   deleteSpecification,
+  postAddSpecification,
   postCopySpecification,
   postSpecification,
   putSpecification

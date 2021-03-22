@@ -6,7 +6,8 @@ const {
   ProjectAddress,
   ProjectUser,
   RoomSpecification,
-  SpecificationCategory
+  SpecificationCategory,
+  SpecificationItem
 } = require('../db/db');
 const { customAlphabet } = require('nanoid');
 const nanoid = customAlphabet('1234567890abcdef', 6)
@@ -149,7 +150,7 @@ async function postProjectCopy(req, res) {
 
     await Promise.all(newAddresses);
 
-    const roomSpecifications = await project.getSpecifications();
+    const roomSpecifications = await existingProject.getSpecifications();
 
     await Promise.all(roomSpecifications.map(async (roomSpecification) => {
       const { room } = roomSpecification;
