@@ -17,6 +17,18 @@ async function deleteSpecificationItem(req, res) {
 
     await specificationItem.destroy();
 
+    const items = await specificationCategory.getItems();
+
+    let total = 0
+
+    items.forEach(item => {
+      total = total + item.total
+    });
+
+    await specificationCategory.update({
+      total
+    });
+
     const project = await Project.findByPk(roomSpecification.projectId);
 
     const response = await project.response();
@@ -43,6 +55,18 @@ async function postSpecificationItem(req, res) {
     })
 
     await specificationCategory.addItem(specificationItem)
+
+    const items = await specificationCategory.getItems();
+
+    let total = 0
+
+    items.forEach(item => {
+      total = total + item.total
+    });
+
+    await specificationCategory.update({
+      total
+    });
 
     const roomSpecification = await RoomSpecification.findByPk(roomSpecificationId);
 
@@ -75,7 +99,23 @@ async function putSpecificationItem(req, res) {
         }
       })
 
-      await updatedSpecificationCategory.addItem(specificationItem)
+      await updatedSpecificationCategory.addItem(specificationItem);
+
+      await updatedSpecificationCategory.update({
+        total: specificationItem.total
+      })
+    } else {
+      const items = await specificationCategory.getItems();
+
+      let total = 0
+
+      items.forEach(item => {
+        total = total + item.total
+      });
+
+      await specificationCategory.update({
+        total
+      });
     }
 
     const roomSpecification = await RoomSpecification.findByPk(specificationCategory.roomSpecificationId);

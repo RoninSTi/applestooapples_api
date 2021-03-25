@@ -72,9 +72,12 @@ async function postAddSpecification(req, res) {
       });
 
       const newSpecificationCategoryPromises = specificationCategories.map(category => {
-        const { type } = category;
+        const { total, type } = category;
 
-        return SpecificationCategory.create({ type });
+        return SpecificationCategory.create({
+          total: depth === 'full' ? total : 0,
+          type,
+        });
       });
 
       const newSpecificationCategories = await Promise.all(newSpecificationCategoryPromises);
@@ -128,9 +131,12 @@ async function postCopySpecification(req, res) {
     });
 
     const newSpecificationCategoryPromises = specificationCategories.map(category => {
-      const { type } = category;
+      const { total, type } = category;
 
-      return SpecificationCategory.create({ type });
+      return SpecificationCategory.create({
+        total: depth === 'full' ? total: 0,
+        type
+      });
     });
 
     const newSpecificationCategories = await Promise.all(newSpecificationCategoryPromises);
