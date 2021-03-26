@@ -14,6 +14,7 @@ class SpecificationItem extends Model {
       dimensions: DataTypes.STRING,
       finish: DataTypes.STRING,
       item: DataTypes.STRING,
+      item2: DataTypes.STRING,
       manufacturer: DataTypes.STRING,
       model: DataTypes.STRING,
       phase: {

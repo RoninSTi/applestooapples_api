@@ -21,7 +21,7 @@ class Project extends Model {
       status: {
         type: DataTypes.ENUM,
         defaultValue: 'pre',
-        values: ['pre', 'under', 'finish', 'completed']
+        values: ['pre', 'under', 'finish', 'complete']
       },
       type: {
         type: DataTypes.ENUM,

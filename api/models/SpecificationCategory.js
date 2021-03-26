@@ -6,7 +6,17 @@ class SpecificationCategory extends Model {
       total: DataTypes.DECIMAL,
       type: {
         type: DataTypes.ENUM,
-        values: ['plumbing', 'hardware', 'lighting', 'finishes', 'stone', 'appliances', 'accessories', 'upholstery', 'furnishings']
+        values: [
+          'plumbing',
+          'hardware',
+          'lighting',
+          'finishes',
+          'stone',
+          'appliances',
+          'accessories',
+          'upholstery',
+          'furnishings',
+          'millwork']
       },
     }, {
       sequelize,
